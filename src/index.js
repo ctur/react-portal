@@ -1,12 +1,59 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import React, { useState } from "react";
+import ReactDOM from "react-dom";
+import { ModalProvider, Modal } from "./Modal";
+import "./index.css";
 
-ReactDOM.render(<App />, document.getElementById('root'));
+function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+  return (
+    <ModalProvider>
+      <form
+        onSubmit={event => {
+          event.preventDefault();
+          console.log("parent form submit");
+        }}
+      >
+        <h1>My App</h1>
+        <button type="button" onClick={() => setIsModalOpen(true)}>
+          Open App Modal
+        </button>
+        <Page />
+        {isModalOpen && (
+          <Modal onClose={() => setIsModalOpen(false)}>
+            <form
+              onSubmit={event => {
+                event.preventDefault();
+                console.log("modal submit");
+              }}
+            >
+              <p>App Modal</p>
+              <button type="submit">Go</button>
+            </form>
+          </Modal>
+        )}
+      </form>
+    </ModalProvider>
+  );
+}
+
+function Page() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  return (
+    <div>
+      <button onClick={() => setIsModalOpen(true)}>Open page modal</button>
+      {isModalOpen && (
+        <Modal
+          onClose={() => setIsModalOpen(false)}
+          style={{ width: 400, textAlign: "center" }}
+        >
+          <p>Page Modal</p>
+        </Modal>
+      )}
+    </div>
+  );
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
